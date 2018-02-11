@@ -1,11 +1,13 @@
 package main
 
 import (
-	"github.com/VivaLaPanda/fraction-parse/parse"
-	"github.com/VivaLaPanda/fraction-parse/types"
+	"fmt"
 	"io/ioutil"
 	"strings"
 	"sync"
+
+	"github.com/VivaLaPanda/fraction-parse/parse"
+	"github.com/VivaLaPanda/fraction-parse/types"
 )
 
 const numWorkers = 5
