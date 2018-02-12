@@ -34,6 +34,10 @@ func (f Fraction) LessThan(other Fraction) bool {
 
 // Reduce makes given fraction reduced.
 func (f Fraction) Reduce() Fraction {
+	if f.Numerator == 0 {
+		f.Denominator = 1
+		return f
+	}
 	gcd := gcdEuclidean(f.Numerator, f.Denominator)
 	f.Numerator /= gcd
 	f.Denominator /= gcd
@@ -42,16 +46,22 @@ func (f Fraction) Reduce() Fraction {
 }
 
 func (f Fraction) String() string {
+	signStr := ""
+	if f.Numerator < 0 {
+		f.Numerator *= -1
+		signStr = "-"
+	}
 	wholeNum, regFraction := f.makeRegular()
+	regFraction = regFraction.Reduce()
 
-	return fmt.Sprintf("%d_%d/%d", wholeNum, regFraction.Numerator, regFraction.Denominator)
+	return fmt.Sprintf("%s%d_%d/%d", signStr, wholeNum, regFraction.Numerator, regFraction.Denominator)
 }
 
 // MakeRegular is a method that Given an irregular fraction will move the
 // extra fraction component into the whole number component
 func (f Fraction) makeRegular() (int, Fraction) {
 	var wholeNumber int
-	if f.Numerator > f.Denominator {
+	if f.Numerator >= f.Denominator {
 		f.Numerator = f.Numerator - f.Denominator
 		wholeNumber, f = f.makeRegular()
 		wholeNumber++
