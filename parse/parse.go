@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"strconv"
 	"sync"
@@ -99,7 +99,7 @@ func StartParseWorker(id int, input <-chan string, output chan<- types.Fraction,
 
 			switch state {
 			case errState:
-				fmt.Printf("FATAL ERROR: %v is not a valid fraction.\n", token)
+				log.Fatalf("FATAL ERROR: %v is not a valid fraction.\n", token)
 				break
 			case emitState:
 				emit(fraction)

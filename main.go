@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -41,8 +42,8 @@ func main() {
 	// and pushes them as Fraction types unto a results chan
 	parsedFractions := make(chan types.Fraction, 100)
 	wg := &sync.WaitGroup{}
+	wg.Add(numWorkers)
 	for w := 0; w < numWorkers; w++ {
-		wg.Add(1)
 		go parse.StartParseWorker(w, fracStrings, parsedFractions, wg)
 	}
 
@@ -51,17 +52,20 @@ func main() {
 		wg.Wait()
 		close(parsedFractions)
 	}()
-	// Combine and sort results
+
+	//results := sortedFractions.Walker()
+	sum := types.Fraction{Numerator: 0, Denominator: 1}
 	sortedFractions := types.NewTree()
-	var sum types.Fraction
 	for fraction := range parsedFractions {
 		sum = sum.Add(fraction)
 		sortedFractions = sortedFractions.Insert(fraction)
 	}
 
 	results := sortedFractions.Walker()
+
+	fmt.Printf("The sum of the fractions is: %s\n", sum)
 	for fraction := range results {
-		log.Printf("%s\n", fraction)
+		fmt.Printf("%s\n", fraction)
 	}
 }
 

@@ -13,7 +13,7 @@ func (f Fraction) Add(other Fraction) Fraction {
 	f.Numerator = (f.Numerator * other.Denominator) + (other.Numerator * f.Denominator)
 	f.Denominator = f.Denominator * other.Denominator
 
-	f.Reduce()
+	f = f.Reduce()
 
 	return f
 }
@@ -38,9 +38,19 @@ func (f Fraction) Reduce() Fraction {
 		f.Denominator = 1
 		return f
 	}
+	isNegative := false
+	if f.Numerator < 0 {
+		isNegative = true
+		f.Numerator *= -1
+	}
+
 	gcd := gcdEuclidean(f.Numerator, f.Denominator)
 	f.Numerator /= gcd
 	f.Denominator /= gcd
+
+	if isNegative {
+		f.Numerator *= -1
+	}
 
 	return f
 }
