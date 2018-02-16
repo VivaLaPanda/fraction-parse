@@ -19,7 +19,7 @@ var stateTable = [][]int{
 	{emitState, emitState, emitState, emitState, emitState, emitState, emitState, 5, emitState},
 	{0, 0, 0, 0, 0, 0, 0, 7, 0},
 	{0, 0, 0, 0, 8, 0, 0, 0, 0},
-	{0, emitState, 0, 0, 0, 0, 0, 8, 0},
+	{0, 0, 0, 0, 0, 0, 0, 9, 0},
 	{emitState, emitState, emitState, emitState, emitState, emitState, emitState, emitState, emitState},
 }
 
@@ -32,7 +32,7 @@ var actionTable = [][]int{
 	{strDec, strDec, strDec, strDec, strDec, strDec, strDec, 0, strDec},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, strNum, 0, 0, 0, 0},
-	{0, strDenom, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{strDenom, strDenom, strDenom, strDenom, strDenom, strDenom, strDenom, strDenom, strDenom},
 }
 
@@ -89,7 +89,6 @@ func StartParseWorker(id int, input <-chan string, output chan<- types.Fraction,
 			case strDec: // Store the decimal part, convert to fraction
 				tempFrac := types.Fraction{Numerator: 0, Denominator: 1}
 				tempFrac.Numerator = currentBufferAsInt
-
 				tempFrac.Denominator = int(math.Pow(float64(10), float64(len(buffer))))
 				fraction = fraction.Add(tempFrac)
 				buffer = ""
@@ -117,26 +116,6 @@ func StartParseWorker(id int, input <-chan string, output chan<- types.Fraction,
 	return
 }
 
-func clearTrailing(s string, runeToSkip rune) string {
-	s = reverse(s)
-	for i, r := range s {
-		if r != runeToSkip {
-			s = s[i:]
-			return reverse(s)
-		}
-	}
-
-	return reverse(s)
-}
-
-func reverse(s string) string {
-	runes := []rune(s)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
-}
-
 func queryTable(table [][]int, state int, inputRune rune) int {
 	return table[state][symbolToIndex(inputRune)]
 }
@@ -152,7 +131,7 @@ func symbolToIndex(r rune) int {
 	case '-':
 		return 2
 	case '+':
-		return 7
+		return 3
 	case '/':
 		return 4
 	case '_':

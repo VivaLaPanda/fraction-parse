@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
 	"strings"
 	"sync"
 
@@ -12,25 +12,28 @@ import (
 	"github.com/VivaLaPanda/fraction-parse/types"
 )
 
-const numWorkers = 1
+const numWorkers = 20
 
 var filepath = flag.String("filepath", "", "File to pull fractions from")
 
 func main() {
 	// Open file
 	flag.Parse()
-
-	if *filepath == "" {
-		log.Fatalf("You must specify a file to parse")
+	var data []byte
+	var err error
+	if flag.NFlag() == 0 {
+		data, err = ioutil.ReadAll(os.Stdin)
+		check(err)
+	} else {
+		data, err = ioutil.ReadFile(*filepath)
+		check(err)
 	}
 
 	// Spawn worker to read in file, split on spaces, and push each
 	// fraction into a buffered chan
 	fracStrings := make(chan string, 100)
 	go func() {
-		fileToParse, err := ioutil.ReadFile(*filepath)
-		check(err)
-		tokensToParse := strings.Split(string(fileToParse), " ")
+		tokensToParse := strings.Split(string(data), " ")
 		for _, elem := range tokensToParse {
 			fracStrings <- elem
 		}

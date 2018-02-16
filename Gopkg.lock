@@ -8,7 +8,7 @@
     "parse",
     "types"
   ]
-  revision = "57770c6e95b767ce6d761e8642e049966e0342b3"
+  revision = "7872771e8f1c704719c06551cc0eb97d2dee8fd2"
 
 [solve-meta]
   analyzer-name = "dep"

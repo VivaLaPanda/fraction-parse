@@ -20,6 +20,7 @@ var parseTests = []struct {
 	{"-0.5", "-0_1/2"},
 	{"-123", "-123_0/1"},
 	{"+123", "123_0/1"},
+	{"12/15", "0_4/5"},
 }
 
 func TestStartParseWorker(t *testing.T) {
