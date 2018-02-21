@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,26 +13,27 @@ import (
 
 const numWorkers = 20
 
-var filepath = flag.String("filepath", "", "File to pull fractions from")
-
 func main() {
+	filepath := os.Args[1]
+
 	// Open file
-	flag.Parse()
 	var data []byte
 	var err error
-	if flag.NFlag() == 0 {
+	if len(os.Args[1:]) == 0 {
 		data, err = ioutil.ReadAll(os.Stdin)
 		check(err)
 	} else {
-		data, err = ioutil.ReadFile(*filepath)
+		data, err = ioutil.ReadFile(filepath)
 		check(err)
 	}
+
+	cleanString := strings.TrimSuffix(string(data), "\n")
 
 	// Spawn worker to read in file, split on spaces, and push each
 	// fraction into a buffered chan
 	fracStrings := make(chan string, 100)
 	go func() {
-		tokensToParse := strings.Split(string(data), " ")
+		tokensToParse := strings.Fields(cleanString)
 		for _, elem := range tokensToParse {
 			fracStrings <- elem
 		}
